@@ -1,0 +1,30 @@
+{
+  "name": "childcare-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js ",
+    "ingest:pa:docs": "node --env-file=.env ingest/ingest_documents_pa.js",
+    "ingest:pa:providers": "node --env-file=.env ingest/ingest_providers_pa.js",
+    "ingest:ma:docs": "node --env-file=.env ingest/ingest_documents_ma.js",
+    "ingest:wv:docs": "node --env-file=.env ingest/ingest_documents_wv.js",
+    "ingest:ma:providers": "node --env-file=.env ingest/ingest_providers_ma.js",
+    "ingest:wv:providers": "node --env-file=.env ingest/ingest_providers_wv.js",
+    "csv:tojson": "node ingest/utils/csv_to_json.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.3.0",
+    "pg": "^8.16.3",
+    "zod": "^3.23.8"
+  },
+  "type": "module"
+}
