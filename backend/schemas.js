@@ -14,8 +14,9 @@ export const Schemas = {
     application_links: z.array(z.string().url()),
     required_documents: z.array(z.string()).optional(),
     citations: z.array(z.string()).min(1),
-  
-    clarifying_questions: z.array(z.string()).optional(),}),
+
+    clarifying_questions: z.array(z.string()).optional(),
+  }),
 
   LOOKUP_RULE: z.object({
     answer: z.string(),
@@ -50,7 +51,19 @@ export const Schemas = {
     hours: z.string().nullable().optional(),
     topic: z.string().nullable().optional(),
     citation_url: z.string()
-  })
+  }),
+
+  // ✅ New COST intent schema
+  COST: z.object({
+    state: z.string().min(2).max(2).transform((s) => s.toUpperCase()),
+    county_fips: z.string().optional(),
+    county: z.string().optional(),
+    age_group: z.enum(["infant", "toddler", "preschool", "school-age", "mixed"]),
+    setting: z.enum(["center", "family"]),
+    metric: z.enum(["median", "p75"]).default("median"),
+    units: z.enum(["monthly", "weekly"]).default("monthly"),
+    year: z.number().default(2022),
+  }),
 };
 
 export function getSchema(intent) {
