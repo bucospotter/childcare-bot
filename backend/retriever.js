@@ -25,15 +25,18 @@ export async function ragSearchDocuments({ state, intent, query, k = 5 }) {
 
   const vecSql = `[${emb.data[0].embedding.join(",")}]`; // pgvector literal
 
-  const sql = `
-    SELECT id, title, url, content
+  const { rows } = await pool.query(
+      `
+    SELECT id, title, url, content,
+           1 - (embedding <=> $1::vector) AS similarity
     FROM documents
-    WHERE state = $1 AND intent = $2
-    ORDER BY embedding <#> $3::vector
-    LIMIT $4
-  `;
-
-  const { rows } = await pool.query(sql, [state, intent, vecSql, k]);
+    WHERE state = $2
+      AND (intent = $3 OR intent IS NULL)
+    ORDER BY embedding <=> $1::vector
+    LIMIT 5
+    `,
+      [vecSql, state, intent] // <— pass intent from caller
+  );
   return rows;
 }
 

@@ -6,6 +6,18 @@ import { validateIntentOutput } from "./validator.js";
 import { ragSearchDocuments, searchProviders } from "./retriever.js";
 import cors from "cors";
 
+// Fallback questions for Pennsylvania eligibility
+const DEFAULT_PA_ELIGIBILITY_QUESTIONS = [
+  "Child’s age (in years and months)",
+  "Household size (including the child)",
+  "Approximate monthly gross household income",
+  "County or ZIP code of residence",
+  "Parent/guardian work or school/training status (hours/week)",
+  "Does the child have a disability, IEP/IFSP, or special needs?",
+  "Current subsidy or waiting list enrollment?",
+  "Preferred schedule (full-time/part-time; hours needed)"
+];
+
 const app = express();
 app.use(express.json());
 
@@ -18,7 +30,21 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-app.get("/health", (req, res) => res.json({ ok: true }));
+app.get("/health", (req, res) => {// ensure PA eligibility returns clarifying questions
+        if (intent === "CHECK_ELIGIBILITY" && state === "PA") {
+          if (!data.clarifying_questions || !Array.isArray(data.clarifying_questions) || data.clarifying_questions.length === 0) {
+            data.clarifying_questions = DEFAULT_PA_ELIGIBILITY_QUESTIONS;
+            // If model didn't provide citations, keep them empty; UI doesn't require for questions.
+                    if (!data.answer) { data.answer = "To check eligibility, I need a few details:"; }
+}
+          if (!data.summary) {
+            data.summary = "To assess eligibility for Pennsylvania Child Care Works (CCW), please answer the questions below.";
+          }
+          if (!data.estimated_fit) {
+            data.estimated_fit = "uncertain";
+          }
+        }
+        res.json({ ok: true })});
 
 app.post("/chat", async (req, res) => {
     try {
@@ -66,7 +92,20 @@ app.post("/chat", async (req, res) => {
                 : `I couldn’t find providers for “${place}”. Try a city like “Pittsburgh” or a 5-digit ZIP.`;
 
             // You can shape providers however your UI expects
-            return res.json({
+            return // ensure PA eligibility returns clarifying questions
+        if (intent === "CHECK_ELIGIBILITY" && state === "PA") {
+          if (!data.clarifying_questions || !Array.isArray(data.clarifying_questions) || data.clarifying_questions.length === 0) {
+            data.clarifying_questions = DEFAULT_PA_ELIGIBILITY_QUESTIONS;
+            // If model didn't provide citations, keep them empty; UI doesn't require for questions.
+          }
+          if (!data.summary) {
+            data.summary = "To assess eligibility for Pennsylvania Child Care Works (CCW), please answer the questions below.";
+          }
+          if (!data.estimated_fit) {
+            data.estimated_fit = "uncertain";
+          }
+        }
+        res.json({
                 intent: "LOOKUP_PROVIDER",
                 answer,
                 citations: [],            // not applicable here
@@ -138,7 +177,20 @@ Return ONLY JSON.`,
 
         // Normalized response shape for UI
         const data = validation.data; // { answer, citations, ... } per your schema
-        return res.json({
+        return // ensure PA eligibility returns clarifying questions
+        if (intent === "CHECK_ELIGIBILITY" && state === "PA") {
+          if (!data.clarifying_questions || !Array.isArray(data.clarifying_questions) || data.clarifying_questions.length === 0) {
+            data.clarifying_questions = DEFAULT_PA_ELIGIBILITY_QUESTIONS;
+            // If model didn't provide citations, keep them empty; UI doesn't require for questions.
+          }
+          if (!data.summary) {
+            data.summary = "To assess eligibility for Pennsylvania Child Care Works (CCW), please answer the questions below.";
+          }
+          if (!data.estimated_fit) {
+            data.estimated_fit = "uncertain";
+          }
+        }
+        res.json({
             intent,
             answer: data.answer,
             citations: data.citations || [],

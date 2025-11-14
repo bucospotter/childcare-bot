@@ -13,8 +13,9 @@ export const Schemas = {
     next_steps: z.array(z.string()),
     application_links: z.array(z.string().url()),
     required_documents: z.array(z.string()).optional(),
-    citations: z.array(z.string()).min(1)
-  }),
+    citations: z.array(z.string()).min(1),
+  
+    clarifying_questions: z.array(z.string()).optional(),}),
 
   LOOKUP_RULE: z.object({
     answer: z.string(),
