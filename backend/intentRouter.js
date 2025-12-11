@@ -47,12 +47,13 @@ export function getPrompt(intent, stateHint = "PA") {
     GENERAL: `Be helpful and brief. If the user is asking for childcare info, ask a SINGLE clarifying question to route to an intent.`
   };
 
+  let systemPrompt = systemByIntent[intent] || systemByIntent.GENERAL;
+
   // PA-specific nudge for Eligibility answers
   if (intent === "CHECK_ELIGIBILITY" && STATE === "PA") {
     systemPrompt += `
 When the state is PA, prefer citing **55 Pa. Code Chapter 3042** sections (e.g., §§ 3042.31–3042.37, 3042.41–3042.44, 3042.91–3042.99) and include URLs to the specific section pages (PA Code and Bulletin).`;
   }
 
-  let systemPrompt = systemByIntent[intent] || systemByIntent.GENERAL;
   return { systemPrompt, collection: intent };
 }
