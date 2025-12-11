@@ -87,7 +87,7 @@ app.post("/chat", async (req, res) => {
         if (intent === "DOCUMENTATION") {
             // 1) Try the raw query
 
-            const docs = await ragSearchDocuments({ state, intent, query: message, k: 5, ignoreIntent: true });
+            let docs = await ragSearchDocuments({ state, intent, query: message, k: 5, ignoreIntent: true });
 
             // 2) If weak results, broaden query with common doc keywords
             if (!docs || docs.length < 2) {
