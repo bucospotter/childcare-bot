@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.use(
     cors({
-        origin: ["http://localhost:5173", "http://localhost:3001", "https://childcare-ui.netlify.app/"],
+        origin: ["http://localhost:5173", "http://localhost:3001", "https://childcare-ui.netlify.app"],
         methods: ["GET", "POST", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
     })
