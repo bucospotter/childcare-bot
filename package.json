@@ -13,6 +13,7 @@
     "ingest:wv:providers": "node --env-file=.env ingest/ingest_providers_wv.js",
     "csv:tojson": "node ingest/utils/csv_to_json.js"
   },
+  "engines": { "node": ">=18" },
   "keywords": [],
   "author": "",
   "license": "ISC",
